@@ -1,32 +1,31 @@
-#define ALPHABET_LEN 26
 class Solution {
 public:
-    bool checkIfCanBreak(string s1, string s2) {
-        vector<int> c1(ALPHABET_LEN, 0);
-        vector<int> c2(ALPHABET_LEN, 0);
-        
-        for (auto ch : s1) {
-            c1[ch - 'a']++;
-        }
-        for (auto ch : s2) {
-            c2[ch - 'a']++;
-        }
-        
-        bool r1 = true;
-        bool r2 = true;
-        int count1 = 0;
-        int count2 = 0;
-        
-        for (int i = 0 ; i < ALPHABET_LEN; ++i) {
-            count1 += c1[i];
-            count2 += c2[i];
-            r1 &= count1 >= count2;
-            r2 &= count2 >= count1;
-            if (!r1 && !r2) {
-                return false;
+    int helper(int curr, vector<bool>& hasApple, vector<vector<int>>& graphs, vector<int>& hasVisited) {
+        hasVisited[curr] = 1;
+        int res = 0;
+        for (auto next : graphs[curr]) {
+            if (hasVisited[next]) {
+                continue;
             }
+            int child_res = helper(next, hasApple, graphs, hasVisited);
+            if (hasApple[next] || child_res) {
+                child_res += 2;
+            }
+            res += child_res;
+        }
+        return res;
+    }
+    
+    int minTime(int n, vector<vector<int>>& edges, vector<bool>& hasApple) {
+        vector<vector<int>> graphs(n);
+        vector<int> hasVisited(n);
+        
+        for (auto edge : edges) {
+            graphs[edge[0]].push_back(edge[1]);
+            graphs[edge[1]].push_back(edge[0]);
         }
         
-        return true;
+        return helper(0, hasApple, graphs, hasVisited);
+        
     }
 };
