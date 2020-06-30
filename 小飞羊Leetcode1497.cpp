@@ -1,19 +1,21 @@
 class Solution {
 public:
-    int longestSubarray(vector<int>& nums) {
-        int left = 0;
-        int right = 0;
-        int res = 0;
-        int zero_count = 0; // 当前窗口内0的个数
-        while (right < nums.size()) {
-            if (nums[right] == 0) zero_count++;
-            while (zero_count > 1 && left < right) {
-                if (nums[left] == 0) zero_count--;
-                left++;
-            }
-            res = max(res, right - left + 1);
-            ++right;
+    bool canArrange(vector<int>& arr, int k) {
+        vector<int> remainders(k, 0);
+        for (auto val : arr) {
+            remainders[(val % k + k) % k]++;
         }
-        return res - 1;
+        
+        // (0, k) pairs should be even
+        if (remainders[0] & 1 != 0) {
+            return false;
+        }
+            
+        for (int r = 1; r <= k / 2; ++r) {
+            if (remainders[r] != remainders[k - r]) {
+                return false;
+            }
+        }
+        return true;
     }
 };
